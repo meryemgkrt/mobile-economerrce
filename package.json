@@ -1,0 +1,27 @@
+{
+  "name": "mobile-economerrce",
+  "version": "1.0.0",
+  "description": "Mobile E-commerce Full Stack App",
+  "main": "index.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix admin",
+    "build": "npm install --prefix backend && npm install --prefix admin && npm run build --prefix admin",
+    "start": "npm run start --prefix backend",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:admin": "npm run dev --prefix admin",
+    "dev": "echo 'Development mode started' && concurrently \"npm run dev:backend\" \"npm run dev:admin\""
+  
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meryemgkrt/mobile-economerrce.git"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
