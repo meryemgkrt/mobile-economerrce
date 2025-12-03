@@ -1,0 +1,16 @@
+cat > render.yaml << 'EOF'
+services:
+  # Backend Service
+  - type: web
+    name: mobile-ecommerce-backend
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+EOF
