@@ -12,7 +12,9 @@
     "start": "npm run start --prefix backend",
     "dev:backend": "npm run dev --prefix backend",
     "dev:admin": "npm run dev --prefix admin",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:admin\""
+    "dev": "echo 'Development mode started' && concurrently \"npm run dev:backend\" \"npm run dev:admin\""
+  
+    
   },
   "repository": {
     "type": "git",
