@@ -10,14 +10,11 @@ app.get("/api/health", (req,res)=>{
     res.status(200).json({message:"Merhaba kod çalıştı!:))"});
 })
 
-// Production - Admin panel
-if(ENV.NODE_ENV==="production"){
-    app.use(express.static(path.join(__dirname,"../admin/dist")));
-    
-    // Catch-all route - en sona koy
-    app.use((req,res)=>{
-        res.sendFile(path.join(__dirname,"../admin","dist","index.html"));
-    })
-}
+// Serve admin panel (always in production)
+app.use(express.static(path.join(__dirname,"../admin/dist")));
 
-app.listen(ENV.PORT, ()=>console.log(`Merhaba sunucu çalıştı! Port: ${ENV.PORT}`));
+app.use((req,res)=>{
+    res.sendFile(path.join(__dirname,"../admin","dist","index.html"));
+})
+
+app.listen(ENV.PORT || 10000, ()=>console.log(`Sunucu çalıştı! Port: ${ENV.PORT || 10000}`));
