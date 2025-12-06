@@ -1,29 +1,33 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-// __dirname düzeltme
+// __dirname düzeltme (ESM için zorunlu)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// **PORT Sevalla için zorunlu — ENV.PORT kullanma**
-const PORT = process.env.PORT || 8080;
+// PORT → Sevalla mutlaka bunu kullanır
+const PORT = process.env.PORT || 10000;
 
-// API routes
+// HEALTH CHECK route
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Merhaba kod çalıştı!:))" });
 });
 
-// Admin panel serving
-app.use(express.static(path.join(__dirname, "../admin/dist")));
+// ADMIN PANEL (React / Vite build)
+const adminPath = path.join(__dirname, "../admin/dist");
 
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../admin/dist/index.html"));
+// Statik dosyalar
+app.use(express.static(adminPath));
+
+// Tüm diğer route’ları index.html'e yönlendir
+app.get("*", (req, res) => {
+  res.sendFile(path.join(adminPath, "index.html"));
 });
 
-// Start server
+// SERVER START
 app.listen(PORT, () => {
   console.log(`Sunucu çalıştı! Port: ${PORT}`);
 });
