@@ -1,0 +1,17 @@
+services:
+  # Backend API and Admin Panel
+  - type: web
+    name: mobile-ecommerce-backend
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm run install:all && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_URL
+        sync: false
+    healthCheckPath: /api/health
