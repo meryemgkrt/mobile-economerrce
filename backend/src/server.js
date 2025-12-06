@@ -1,22 +1,29 @@
 import express from 'express';
 import path from 'path';
-import { ENV } from './config/env.js';
+import { fileURLToPath } from 'url';
+
+// __dirname düzeltme
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const __dirname = path.resolve();
+
+// **PORT Sevalla için zorunlu — ENV.PORT kullanma**
+const PORT = process.env.PORT || 8080;
 
 // API routes
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Merhaba kod çalıştı!:))" });
 });
 
-// Serve admin panel (production)
+// Admin panel serving
 app.use(express.static(path.join(__dirname, "../admin/dist")));
 
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
+  res.sendFile(path.join(__dirname, "../admin/dist/index.html"));
 });
 
-app.listen(ENV.PORT || 10000, () =>
-  console.log(`Sunucu çalıştı! Port: ${ENV.PORT || 10000}`)
-);
+// Start server
+app.listen(PORT, () => {
+  console.log(`Sunucu çalıştı! Port: ${PORT}`);
+});
