@@ -6,13 +6,9 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "scripts": {
-    "install:all": "npm install --prefix backend && npm install --prefix admin",
-    "build": "cd admin && npm install && npm run build",
-    "start": "npm run start --prefix backend",
-    "dev:backend": "npm run dev --prefix backend",
-    "dev:admin": "npm run dev --prefix admin",
-    "dev": "echo Development mode started && concurrently \"npm run dev:backend\" \"npm run dev:admin\""
+   "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix admin && npm run build --prefix admin",
+    "start": "npm run start --prefix backend"
   },
   "repository": {
     "type": "git",
