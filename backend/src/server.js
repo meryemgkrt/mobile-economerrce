@@ -7,7 +7,7 @@ const app = express();
 const __dirname = path.resolve();
 
 app.get("/", (req, res) => {
-  res.send("Backend is up and running 🚀");
+  res.send("Backend çalıştı 🚀");
 });
 
 app.get("/api/health", (req, res)=>{
