@@ -1,26 +1,23 @@
 import express from "express";
 import path from "path";
-import {ENV} from "./config/env.js";
+import { ENV } from "./config/env.js";
 
 const app = express();
 
 const __dirname = path.resolve();
 
-app.get("/", (req, res) => {
-  res.send("Backend çalıştı 🚀");
+// API routes (bunlar önce olmalı!)
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ message: "Merhaba kod çalıştı!:))" });
 });
 
-app.get("/api/health", (req, res)=>{
-    res.status(200).json({message: "Merhaba kod çalıştı!:))"});
-})
+// Frontend'i serve et (public klasöründen)
+app.use(express.static(path.join(__dirname, "public")));
 
-if(ENV.NODE_ENV === "production"){
-    app.use(express.static(path.join(__dirname,"../admin/dist")))
-
-    app.get("/{*any}", (req, res)=>{
-        res.sendFile(path.join(__dirname, "../admin", "dist", "index.html"));
-    })
-}
+// Tüm diğer route'lar frontend'e gitsin (React Router için)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 app.listen(ENV.PORT, () => {
   console.log(`Sunucu çalıştı! Port: ${ENV.PORT}`);
