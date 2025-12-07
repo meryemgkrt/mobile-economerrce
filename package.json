@@ -2,6 +2,7 @@
   "name": "mobile-ecommerrce",
   "version": "1.0.0",
   "description": "Mobile E-commerce Full Stack App",
+  "main": "index.js",
   "private": true,
   "engines": {
     "node": ">=20.0.0"

@@ -18,8 +18,8 @@ if(ENV.NODE_ENV === "production"){
     })
 }
 
-a
 
-app.listen(ENVPORT, () => {
-  console.log(`Sunucu çalıştı! Port: ${PORT}`);
+
+app.listen(ENV.PORT, () => {
+  console.log(`Sunucu çalıştı! Port: ${ENV.PORT}`);
 });
