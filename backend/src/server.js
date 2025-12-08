@@ -14,8 +14,8 @@ app.get("/api/health", (req, res) => {
 // Frontend'i serve et (public klasöründen)
 app.use(express.static(path.join(__dirname, "public")));
 
-// Tüm diğer route'lar frontend'e gitsin (React Router için)
-app.get("*", (req, res) => {
+// Fallback: API olmayan tüm route'lar frontend'e gitsin
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
