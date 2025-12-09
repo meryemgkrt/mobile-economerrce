@@ -1,6 +1,6 @@
 import express from "express";
 import path from "path";
-import {clerkMiddleware} from "@clerk/express";
+// import {clerkMiddleware} from "@clerk/express";
 import { ENV } from "./config/env.js";
 import { connetDB } from "./config/db.js";
 
@@ -8,7 +8,7 @@ const app = express();
 
 const __dirname = path.resolve();
 
-app.use(clerkMiddleware());
+// app.use(clerkMiddleware());
 
 // API routes (bunlar önce olmalı!)
 app.get("/api/health", (req, res) => {
