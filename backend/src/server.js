@@ -1,10 +1,10 @@
 import express from "express";
 import path from "path";
 import { ENV } from "./config/env.js";
-import { connetDB } from "./config/db.js";
+import { connectDB } from "./config/db.js";
 
 const app = express();
-app.use(express.json()); // Inngest POST isteği için gerekli
+app.use(express.json());
 
 const __dirname = path.resolve();
 
@@ -22,7 +22,7 @@ app.post("/api/inngest", (req, res) => {
   res.status(200).json({
     ok: true,
     message: "Inngest endpoint çalışıyor",
-    received: req.body, // Inngest gönderirse burada görünür
+    received: req.body,
   });
 });
 
@@ -41,5 +41,5 @@ app.use((req, res) => {
 // ------------------------------
 app.listen(ENV.PORT, () => {
   console.log(`Sunucu çalıştı! Port: ${ENV.PORT}`);
-  connetDB();
+  connectDB();
 });
