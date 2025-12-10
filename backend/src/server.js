@@ -9,37 +9,41 @@ app.use(express.json());
 const __dirname = path.resolve();
 
 // ------------------------------
-// 🔹 Health Check Route
+// ✅ HEALTH CHECK
 // ------------------------------
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Merhaba kod çalıştı!:))" });
 });
 
 // ------------------------------
-// 🔹 Inngest Test Endpoint (POST OLMAK ZORUNDA)
+// ✅ INNGEST ENDPOINT (POST ZORUNLU)
 // ------------------------------
 app.post("/api/inngest", (req, res) => {
   res.status(200).json({
     ok: true,
-    message: "Inngest endpoint çalışıyor",
+    message: "Inngest endpoint çalışıyor!",
     received: req.body,
   });
 });
 
 // ------------------------------
-// 🔹 Frontend (public) Servisi
+// ✅ FRONTEND (PUBLIC)
 // ------------------------------
 app.use(express.static(path.join(__dirname, "public")));
 
-// 🔹 Fallback → Frontend index.html
-app.use((req, res) => {
+// ------------------------------
+// ✅ NODE 24 UYUMLU FALLBACK (WILDCARD HATASI YOK)
+// ------------------------------
+app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // ------------------------------
-// 🔹 Sunucu Başlatma
+// ✅ PORT (SEVALLA + LOCAL UYUMLU)
 // ------------------------------
-app.listen(ENV.PORT, () => {
-  console.log(`Sunucu çalıştı! Port: ${ENV.PORT}`);
+const PORT = process.env.PORT || ENV.PORT || 8080;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
   connectDB();
 });
