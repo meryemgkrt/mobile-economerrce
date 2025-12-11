@@ -9,6 +9,20 @@ app.use(express.json());
 const __dirname = path.resolve();
 
 // ------------------------------
+// ✅ ROOT ENDPOINT (Sevalla için)
+// ------------------------------
+app.get("/", (req, res) => {
+  res.status(200).json({ 
+    status: "ok", 
+    message: "Backend API running 🚀",
+    endpoints: {
+      health: "/api/health",
+      inngest: "/api/inngest"
+    }
+  });
+});
+
+// ------------------------------
 // ✅ HEALTH CHECK
 // ------------------------------
 app.get("/api/health", (req, res) => {
@@ -16,15 +30,12 @@ app.get("/api/health", (req, res) => {
 });
 
 // ------------------------------
-// ✅ INNGEST ENDPOINT'LERİ
+// ✅ INNGEST ENDPOINTS
 // ------------------------------
-
-// Inngest URL testleri için (panel URL'i denerken 404 almasın diye)
 app.get("/api/inngest", (req, res) => {
   res.status(200).send("Inngest GET endpoint is alive");
 });
 
-// Gerçek Inngest istekleri için
 app.post("/api/inngest", (req, res) => {
   res.status(200).json({
     ok: true,
