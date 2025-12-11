@@ -16,26 +16,21 @@ app.get("/api/health", (req, res) => {
 });
 
 // ------------------------------
-// ✅ INNGEST ENDPOINT (POST ZORUNLU)
+// ✅ INNGEST ENDPOINT'LERİ
 // ------------------------------
+
+// Inngest URL testleri için (panel URL'i denerken 404 almasın diye)
+app.get("/api/inngest", (req, res) => {
+  res.status(200).send("Inngest GET endpoint is alive");
+});
+
+// Gerçek Inngest istekleri için
 app.post("/api/inngest", (req, res) => {
   res.status(200).json({
     ok: true,
     message: "Inngest endpoint çalışıyor!",
     received: req.body,
   });
-});
-
-// ------------------------------
-// ✅ FRONTEND (PUBLIC)
-// ------------------------------
-app.use(express.static(path.join(__dirname, "public")));
-
-// ------------------------------
-// ✅ NODE 24 UYUMLU FALLBACK (WILDCARD HATASI YOK)
-// ------------------------------
-app.get(/^(?!\/api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // ------------------------------
