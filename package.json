@@ -7,16 +7,13 @@
   "engines": {
     "node": ">=20.0.0"
   },
-   "scripts": {
-    "build": "npm install --prefix backend && npm install --prefix admin && npm run build --prefix admin",
+  "scripts": {
+    "install": "npm install --prefix backend",
     "start": "npm run start --prefix backend"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/meryemgkrt/mobile-ecommerce.git"
   },
-  "license": "ISC",
-  "devDependencies": {
-    "concurrently": "^9.2.1"
-  }
+  "license": "ISC"
 }
