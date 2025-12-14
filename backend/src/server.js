@@ -34,9 +34,11 @@ if (ENV.NODE_ENV === "production") {
 // ------------------------------
 // ✅ PORT (SEVALLA + LOCAL UYUMLU)
 // ------------------------------
-const PORT = process.env.PORT || ENV.PORT || 8080;
+const starServer=async()=>{
+  await connectDB();
+  app.listen(ENV.PORT,()=>{
+    console.log(`Server running on port ${ENV.PORT}`);
+  })
+}
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  connectDB();
-});
+starServer();
