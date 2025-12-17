@@ -13,6 +13,7 @@ app.use(express.json());
 const __dirname = path.resolve();
 
 app.use(clerkMiddleware());
+app.use("/api/inngest",serve({client: inngest, functions}));
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Merhaba kod çalıştı!:))" });
@@ -32,7 +33,7 @@ if (ENV.NODE_ENV === "production") {
 const startServer = async () => {
   await connectDB();
   const PORT = ENV.PORT || 8080;
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  app.listen(PORT, () => console.log(`Backent başarılı 👍 ${PORT}`));
 };
 
 startServer();
