@@ -65,4 +65,5 @@ ref:'Product',
     }],
 }, {timestamps:true});
 
-export const User=mongoose.model('User',userSchema);
+// user.js - SON SATIRI
+export default mongoose.model('User', userSchema);
