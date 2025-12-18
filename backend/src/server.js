@@ -2,10 +2,10 @@ import express from "express";
 import path from "path";
 import { clerkMiddleware } from "@clerk/express";
 import { serve } from "inngest/express";
-import { functions, inngest } from "./config/inngest.js";
 
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
+import { inngest, functions } from "./config/inngest.js";
 
 const app = express();
 app.use(express.json());
@@ -13,27 +13,29 @@ app.use(express.json());
 const __dirname = path.resolve();
 
 app.use(clerkMiddleware());
-app.use("/api/inngest",serve({client: inngest, functions}));
 
+// HEALTH CHECK
 app.get("/api/health", (req, res) => {
-  res.status(200).json({ message: "Merhaba kod çalıştı!:))" });
+  res.json({ message: "Backend çalışıyor ✅" });
 });
 
-// app.use("/api/inngest", serve({ client: inngest, functions }));
+// INNGEST ENDPOINT
+app.use("/api/inngest", serve({ client: inngest, functions }));
 
+// PROD FRONTEND
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../admin/dist")));
   app.get(/^(?!\/api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, "../admin/dist/index.html"));
   });
-} else {
-  app.get("/", (req, res) => res.send("Backend çalışıyor ✅"));
 }
 
+// START SERVER
 const startServer = async () => {
   await connectDB();
-  const PORT = ENV.PORT || 8080;
-  app.listen(PORT, () => console.log(`Backent başarılı 👍 ${PORT}`));
+  app.listen(ENV.PORT, () =>
+    console.log(`🚀 Server running on port ${ENV.PORT}`)
+  );
 };
 
 startServer();
