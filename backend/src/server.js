@@ -12,30 +12,50 @@ app.use(express.json());
 
 const __dirname = path.resolve();
 
-app.use(clerkMiddleware());
+/* ============================
+   CLERK MIDDLEWARE (ÖNEMLİ)
+============================ */
+app.use(
+  clerkMiddleware({
+    publishableKey: ENV.CLERK_PUBLISHABLE_KEY,
+    secretKey: ENV.CLERK_SECRET_KEY,
+  })
+);
 
-// HEALTH CHECK
+/* ============================
+   HEALTH CHECK
+============================ */
 app.get("/api/health", (req, res) => {
-  res.json({ message: "Backend çalışıyor ✅" });
+  res.status(200).json({ message: "Backend çalışıyor ✅" });
 });
 
-// INNGEST ENDPOINT
-app.use("/api/inngest", serve({ client: inngest, functions }));
+/* ============================
+   INNGEST ENDPOINT
+============================ */
+app.use(
+  "/api/inngest",
+  serve({ client: inngest, functions, signingKey: ENV.INNGEST_SIGNING_KEY })
+);
 
-// PROD FRONTEND
+
+/* ============================
+   PRODUCTION FRONTEND
+============================ */
 if (ENV.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../admin/dist")));
+
   app.get(/^(?!\/api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, "../admin/dist/index.html"));
   });
 }
 
-// START SERVER
+
 const startServer = async () => {
   await connectDB();
-  app.listen(ENV.PORT, () =>
-    console.log(`🚀 Server running on port ${ENV.PORT}`)
-  );
+
+  app.listen(ENV.PORT, () => {
+    console.log(`🚀 Server running on port ${ENV.PORT}`);
+  });
 };
 
 startServer();
