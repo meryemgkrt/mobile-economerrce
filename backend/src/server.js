@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import { fileURLToPath } from "url";
 import { clerkMiddleware } from "@clerk/express";
 import { serve } from "inngest/express";
 
@@ -10,15 +11,29 @@ import { inngest, functions } from "./config/inngest.js";
 const app = express();
 app.use(express.json());
 
-const __dirname = path.resolve();
+// ✅ Gerçek __dirname (ESM uyumlu)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /* ============================
-   CLERK MIDDLEWARE (ÖNEMLİ)
+   CLERK MIDDLEWARE
+   (Backend → SADECE secretKey)
 ============================ */
 app.use(
   clerkMiddleware({
-    publishableKey: ENV.CLERK_PUBLISHABLE_KEY,
     secretKey: ENV.CLERK_SECRET_KEY,
+  })
+);
+
+/* ============================
+   INNGEST ENDPOINT
+============================ */
+app.use(
+  "/api/inngest",
+  serve({
+    client: inngest,
+    functions,
+    signingKey: ENV.INNGEST_SIGNING_KEY,
   })
 );
 
@@ -30,31 +45,34 @@ app.get("/api/health", (req, res) => {
 });
 
 /* ============================
-   INNGEST ENDPOINT
+   ROOT (TEST)
 ============================ */
-app.use(
-  "/api/inngest",
-  serve({ client: inngest, functions, signingKey: ENV.INNGEST_SIGNING_KEY })
-);
-
+app.get("/", (req, res) => {
+  res.status(200).send("OK ✅ Backend çalışıyor");
+});
 
 /* ============================
-   PRODUCTION FRONTEND
+   PRODUCTION FRONTEND (Vite)
 ============================ */
-if (ENV.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../admin/dist")));
+if (process.env.NODE_ENV === "production") {
+  const adminDist = path.join(__dirname, "../admin/dist");
+
+  app.use(express.static(adminDist));
 
   app.get(/^(?!\/api).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, "../admin/dist/index.html"));
+    res.sendFile(path.join(adminDist, "index.html"));
   });
 }
 
-
+/* ============================
+   SERVER START
+============================ */
 const startServer = async () => {
   await connectDB();
 
-  app.listen(ENV.PORT, () => {
-    console.log(`🚀 Server running on port ${ENV.PORT}`);
+  const PORT = process.env.PORT || ENV.PORT || 8080;
+  app.listen(PORT, () => {
+    console.log(`🚀 Backend başarılı 👍 Port: ${PORT}`);
   });
 };
 
