@@ -34,6 +34,7 @@ app.use(
     client: inngest,
     functions,
     signingKey: ENV.INNGEST_SIGNING_KEY,
+    signingKeyFallback: ENV.INNGEST_SIGNING_KEY_FALLBACK,  // ⬅️ BUNU EKLEYİN
   })
 );
 
