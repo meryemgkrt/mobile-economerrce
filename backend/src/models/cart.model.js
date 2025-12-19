@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const cartItemSchema = new mongoose.Schema({
+const orderItemSchema = new mongoose.Schema({
     product: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
@@ -24,7 +24,8 @@ const cartItemSchema = new mongoose.Schema({
     image: {
         type: String,
         required: true,
-    }
+    },
+
 })
 
 
@@ -39,7 +40,8 @@ const cartSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    items: [cartItemSchema],
+    orderItems: [orderItemSchema],
+   
    
 
 }, { timestamps: true });
