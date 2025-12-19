@@ -20,9 +20,7 @@ const __dirname = path.dirname(__filename);
    (Backend → SADECE secretKey)
 ============================ */
 app.use(
-  clerkMiddleware({
-    secretKey: ENV.CLERK_SECRET_KEY,
-  })
+  clerkMiddleware()
 );
 
 /* ============================
