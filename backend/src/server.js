@@ -50,9 +50,7 @@ app.get("/", (req, res) => {
   res.status(200).send("OK ✅ Backend çalışıyor");
 });
 
-/* ============================
-   PRODUCTION FRONTEND (Vite)
-============================ */
+
 if (process.env.NODE_ENV === "production") {
   const adminDist = path.join(__dirname, "../admin/dist");
 
