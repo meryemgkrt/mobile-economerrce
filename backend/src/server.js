@@ -7,6 +7,10 @@ import { serve } from "inngest/express";
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 import { inngest, functions } from "./config/inngest.js";
+import router from "./routes/admin.route.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -35,6 +39,12 @@ app.use(
     signingKeyFallback: ENV.INNGEST_SIGNING_KEY_FALLBACK,  // ⬅️ BUNU EKLEYİN
   })
 );
+/* ============================
+    ADMIN ROUTES
+  ============================ */
+  app.use("/api/admin", router);
+
+
 
 /* ============================
    HEALTH CHECK
@@ -42,6 +52,8 @@ app.use(
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Backend çalışıyor ✅" });
 });
+  
+
 
 /* ============================
    ROOT (TEST)
