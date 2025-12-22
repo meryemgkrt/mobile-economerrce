@@ -9,9 +9,9 @@ const router = Router();
 router.use(protectRoute, adminOnly);
 
 // Tek resim yükleme için .single() kullan
-router.post("/products", upload.single('image'), createProduct);
+router.post("/products", upload.array('images',3), createProduct);
 router.get("/products", allProduct);
-router.put("/products/:id", upload.single('image'), updateProduct); // Update için de
+router.put("/products/:id",upload.array('images',3), updateProduct); 
 router.delete("/products/:id", deleteProduct);
 
 export default router;
