@@ -36,15 +36,40 @@ app.use(
     client: inngest,
     functions,
     signingKey: ENV.INNGEST_SIGNING_KEY,
-    signingKeyFallback: ENV.INNGEST_SIGNING_KEY_FALLBACK,  // ⬅️ BUNU EKLEYİN
+    signingKeyFallback: ENV.INNGEST_SIGNING_KEY_FALLBACK,
   })
 );
+
+/* ============================
+   TEST INNGEST (DEVELOPMENT)
+============================ */
+app.post("/api/test-inngest", async (req, res) => {
+  try {
+    await inngest.send({
+      name: "clerk/user.created",
+      data: {
+        id: "test_user_" + Date.now(),
+        email_addresses: [{ email_address: "test@example.com" }],
+        first_name: "Test",
+        last_name: "User",
+        image_url: "https://example.com/avatar.jpg"
+      }
+    });
+    
+    res.json({ 
+      success: true, 
+      message: "✅ Test event gönderildi! Inngest Runs sayfasını kontrol et." 
+    });
+  } catch (error) {
+    console.error("Inngest test error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 /* ============================
     ADMIN ROUTES
   ============================ */
-  app.use("/api/admin", router);
-
-
+app.use("/api/admin", router);
 
 /* ============================
    HEALTH CHECK
@@ -52,8 +77,6 @@ app.use(
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Backend çalışıyor ✅" });
 });
-  
-
 
 /* ============================
    ROOT (TEST)
@@ -61,7 +84,6 @@ app.get("/api/health", (req, res) => {
 app.get("/", (req, res) => {
   res.status(200).send("OK ✅ Backend çalışıyor");
 });
-
 
 if (process.env.NODE_ENV === "production") {
   const adminDist = path.join(__dirname, "../admin/dist");
