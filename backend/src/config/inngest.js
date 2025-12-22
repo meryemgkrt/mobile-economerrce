@@ -5,9 +5,9 @@ import { ENV } from "./env.js";
 
 export const inngest = new Inngest({
   id: "economerrce-app",
+  // eventKey gerekmiyor (modern Inngest)
 });
 
-// ✅ Clerk eventleri için (ileride doğru event isimlerini de netleştiririz)
 const syncUser = inngest.createFunction(
   { id: "sync-user" },
   { event: "clerk/user.created" },
