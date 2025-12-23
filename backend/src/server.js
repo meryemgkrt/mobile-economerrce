@@ -1,16 +1,19 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+
 import { clerkMiddleware } from "@clerk/express";
 import { serve } from "inngest/express";
 
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 import { inngest, functions } from "./config/inngest.js";
-import router from "./routes/admin.route.js";
-import dotenv from "dotenv";
 
-dotenv.config();
+import adminRoutes from "./routes/admin.route.js";
+import userRoutes from "./routes/user.route.js"; // ✅ varsa aç
 
 const app = express();
 app.use(express.json());
@@ -21,11 +24,8 @@ const __dirname = path.dirname(__filename);
 
 /* ============================
    CLERK MIDDLEWARE
-   (Backend → SADECE secretKey)
 ============================ */
-app.use(
-  clerkMiddleware()
-);
+app.use(clerkMiddleware());
 
 /* ============================
    INNGEST ENDPOINT
@@ -52,13 +52,13 @@ app.post("/api/test-inngest", async (req, res) => {
         email_addresses: [{ email_address: "test@example.com" }],
         first_name: "Test",
         last_name: "User",
-        image_url: "https://example.com/avatar.jpg"
-      }
+        image_url: "https://example.com/avatar.jpg",
+      },
     });
-    
-    res.json({ 
-      success: true, 
-      message: "✅ Test event gönderildi! Inngest Runs sayfasını kontrol et." 
+
+    res.json({
+      success: true,
+      message: "✅ Test event gönderildi! Inngest Runs sayfasını kontrol et.",
     });
   } catch (error) {
     console.error("Inngest test error:", error);
@@ -67,9 +67,14 @@ app.post("/api/test-inngest", async (req, res) => {
 });
 
 /* ============================
-    ADMIN ROUTES
-  ============================ */
-app.use("/api/admin", router);
+   ADMIN ROUTES
+============================ */
+app.use("/api/admin", adminRoutes);
+
+/* ============================
+   USER ROUTES (İSTERSEN AÇ)
+============================ */
+app.use("/api/users", userRoutes);
 
 /* ============================
    HEALTH CHECK
@@ -85,6 +90,9 @@ app.get("/", (req, res) => {
   res.status(200).send("OK ✅ Backend çalışıyor");
 });
 
+/* ============================
+   PRODUCTION STATIC (ADMIN)
+============================ */
 if (process.env.NODE_ENV === "production") {
   const adminDist = path.join(__dirname, "../admin/dist");
 
@@ -99,12 +107,17 @@ if (process.env.NODE_ENV === "production") {
    SERVER START
 ============================ */
 const startServer = async () => {
-  await connectDB();
+  try {
+    await connectDB();
 
-  const PORT = process.env.PORT || ENV.PORT || 8080;
-  app.listen(PORT, () => {
-    console.log(`🚀 Backend başarılı 👍 Port: ${PORT}`);
-  });
+    const PORT = process.env.PORT || ENV.PORT || 8080;
+    app.listen(PORT, () => {
+      console.log(`🚀 Backend başarılı 👍 Port: ${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Server başlatma hatası:", err.message);
+    process.exit(1);
+  }
 };
 
 startServer();

@@ -3,12 +3,15 @@ import path from "path";
 
 // Depolama yapılandırması
 const storage = multer.diskStorage({
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname || "").toLowerCase();
-        const safeExt =[ ".jpg", ".jpeg", ".png", ".webp"].includes(ext) ? ext : "";
-        const unique =`${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-        cb(null, `${unique}${safeExt}`);
-    }
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname || "").toLowerCase();
+    const safeExt = [".jpg", ".jpeg", ".png", ".webp"].includes(ext) ? ext : "";
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    cb(null, `${unique}${safeExt}`);
+  }
 });
 
 // File filtreleme (jpg, jpeg, png, webp)
