@@ -13,7 +13,8 @@ import { connectDB } from "./config/db.js";
 import { inngest, functions } from "./config/inngest.js";
 
 import adminRoutes from "./routes/admin.route.js";
-import userRoutes from "./routes/user.route.js"; // ✅ varsa aç
+import userRoutes from "./routes/user.route.js"; 
+import orderRoutes from "./routes/order.route.js";
 
 const app = express();
 app.use(express.json());
@@ -73,8 +74,13 @@ app.use("/api/admin", adminRoutes);
 
 /* ============================
    USER ROUTES (İSTERSEN AÇ)
-============================ */
+ */
 app.use("/api/users", userRoutes);
+
+/* ============================
+    ORDER ROUTES (İSTERSEN AÇ)
+============================ */
+app.use("/api/orders", orderRoutes);
 
 /* ============================
    HEALTH CHECK
