@@ -108,7 +108,7 @@ export async function updateProduct(req, res) {
   }
 }
 
-export async function deleteProduct(req, res) {
+/* export async function deleteProduct(req, res) {
   try {
     const { id } = req.params;
     const product = await Product.findByIdAndDelete(id);
@@ -122,7 +122,7 @@ export async function deleteProduct(req, res) {
     console.error("Error deleting product:", error);
     res.status(500).json({ message: "Hata oluştu" });
   }
-}
+} */
 
 export async function getAllOrders(req, res) {
   try {
