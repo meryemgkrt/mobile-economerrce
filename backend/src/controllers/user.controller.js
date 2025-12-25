@@ -14,6 +14,13 @@ export async function addAddress(req, res) {
     } = req.body;
     const user = req.user;
 
+    if(! fullName || !streetAddress || !city || !state || !zipCode || !phoneNumber || !label){
+      return  res.status(400).json({
+        status: "error",
+        message: "All address fields are required",
+      });
+    }
+
     if (isDefault) {
       usrt.addresses.forEach((address) => {
         address.isDefault = false;
@@ -181,8 +188,11 @@ export async function removeFromWishlist(req, res) {
 }
 export async function getWishlist(req, res) {
     try {
-        const user = req.user;
-        res.status(200).json({ wishlist: user.wishlist });  
+       const user= await User.findById(req, res.user._id).populate("wishlist");
+         res.status(200).json({
+          status: "success",
+          data: user.wishlist,
+         }); 
     } catch (error) {
         console.error("Error getting wishlist:", error);
         res.status(500).json({
