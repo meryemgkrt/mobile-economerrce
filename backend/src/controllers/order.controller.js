@@ -54,7 +54,8 @@ export async function getUserOrders(req, res) {
         })
         return {
             ...order.toObject(),
-            hasReview: !!review,
+            hasReview: reviewedOrderIds.has(order._id.toString()),
+            reviewId: review ? review._id : null,
         };
     }))
 
