@@ -13,8 +13,10 @@ import { connectDB } from "./config/db.js";
 import { inngest, functions } from "./config/inngest.js";
 
 import adminRoutes from "./routes/admin.route.js";
-import userRoutes from "./routes/user.route.js"; 
+import userRoutes from "./routes/user.route.js";
 import orderRoutes from "./routes/order.route.js";
+import reviewRoutes from "./routes/review.route.js";
+import productRoutes from "./routes/product.route.js";
 
 const app = express();
 app.use(express.json());
@@ -67,20 +69,13 @@ app.post("/api/test-inngest", async (req, res) => {
   }
 });
 
-/* ============================
-   ADMIN ROUTES
-============================ */
+/*Router add server */
 app.use("/api/admin", adminRoutes);
-
-/* ============================
-   USER ROUTES (İSTERSEN AÇ)
- */
 app.use("/api/users", userRoutes);
-
-/* ============================
-    ORDER ROUTES (İSTERSEN AÇ)
-============================ */
 app.use("/api/orders", orderRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/products", productRoutes);
+
 
 /* ============================
    HEALTH CHECK
