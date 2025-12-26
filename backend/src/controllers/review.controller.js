@@ -6,7 +6,7 @@ export async function createReview(req, res) {
   try {
     const { productId, rating, orderId } = req.body;
 
-    // basic validations
+    // Basic validations
     if (!productId || !orderId) {
       return res.status(400).json({ message: "productId and orderId are required" });
     }
@@ -21,27 +21,27 @@ export async function createReview(req, res) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    // verify order exists
+    // Verify order exists
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // verify ownership
+    // Verify ownership
     if (order.clerkId !== user.clerkId) {
       return res
         .status(403)
         .json({ message: "You can only review products from your own orders" });
     }
 
-    // verify delivered
+    // Verify delivered
     if (order.status !== "delivered") {
       return res
         .status(400)
         .json({ message: "You can only review products from delivered orders" });
     }
 
-    // verify product is in order
+    // Verify product is in order
     const productInOrder = order.orderItems?.find(
       (item) => String(item.product) === String(productId)
     );
@@ -49,7 +49,7 @@ export async function createReview(req, res) {
       return res.status(400).json({ message: "Product not found in the order" });
     }
 
-    // prevent duplicate review
+    // Prevent duplicate review
     const existingReview = await Review.findOne({
       productId,
       userId: user._id,
@@ -59,7 +59,7 @@ export async function createReview(req, res) {
       return res.status(400).json({ message: "You have already reviewed this product" });
     }
 
-    // create review
+    // Create review
     const review = await Review.create({
       productId,
       userId: user._id,
@@ -68,8 +68,7 @@ export async function createReview(req, res) {
       rating: numericRating,
     });
 
-    // (optional) if your Product schema tracks rating counts/avg
-    // If your schema doesn't have these fields, remove this block.
+    // Update product rating
     const product = await Product.findById(productId);
     if (product) {
       const total = Number(product.totalRatings || 0) + 1;
@@ -83,8 +82,61 @@ export async function createReview(req, res) {
 
     return res.status(201).json({ message: "Review created", review });
   } catch (error) {
+    console.error("Error creating review:", error);
     return res.status(500).json({ message: "Server error", error: error?.message });
   }
 }
 
-export async function deleteReview(req, res) { }
+export async function deleteReview(req, res) {
+  try {
+    const { reviewId } = req.params;
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Find review
+    const review = await Review.findById(reviewId);
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    // Verify ownership
+    if (review.userId.toString() !== user._id.toString()) {
+      return res.status(403).json({ message: "You can only delete your own reviews" });
+    }
+
+    const productId = review.productId;
+    const deletedRating = review.rating;
+
+    // Delete review
+    await Review.findByIdAndDelete(reviewId);
+
+    // Update product rating
+    const product = await Product.findById(productId);
+    if (product && product.totalRatings > 0) {
+      const newTotal = product.totalRatings - 1;
+
+      if (newTotal === 0) {
+        // No reviews left
+        product.totalRatings = 0;
+        product.averageRating = 0;
+      } else {
+        // Recalculate average
+        const currentSum = product.averageRating * product.totalRatings;
+        const newAvg = (currentSum - deletedRating) / newTotal;
+
+        product.totalRatings = newTotal;
+        product.averageRating = newAvg;
+      }
+
+      await product.save();
+    }
+
+    res.status(200).json({ message: "Review deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting review:", error);
+    res.status(500).json({ message: "Server error", error: error?.message });
+  }
+}
