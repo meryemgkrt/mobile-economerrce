@@ -7,9 +7,9 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "scripts": {
-    "build": "cd admin && npm install && npm run build && cd ..",
-    "start": "cd backend && npm start"
+ "scripts": {
+    "build": "npm install --prefix backend && npm install --prefix admin && npm run build --prefix admin",
+    "start": "npm run start --prefix backend"
   },
   "repository": {
     "type": "git",
