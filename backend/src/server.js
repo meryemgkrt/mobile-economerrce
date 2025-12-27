@@ -3,6 +3,7 @@ dotenv.config();
 
 import express from "express";
 import path from "path";
+import fs from "fs";  // ✅ EKLE
 import { fileURLToPath } from "url";
 
 import { clerkMiddleware } from "@clerk/express";
@@ -34,7 +35,6 @@ const __dirname = path.dirname(__filename);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// CORS ayarları
 app.use(
   cors({
     origin: process.env.NODE_ENV === "production" 
@@ -44,7 +44,6 @@ app.use(
   })
 );
 
-// Request logging (development)
 if (process.env.NODE_ENV !== "production") {
   app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
@@ -52,7 +51,6 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-// Clerk middleware
 app.use(clerkMiddleware());
 
 /* ============================
@@ -133,11 +131,21 @@ app.use("/api/cart", cartRoutes);
 if (process.env.NODE_ENV === "production") {
   const adminDist = path.join(__dirname, "../admin/dist");
 
-  app.use(express.static(adminDist));
+  console.log("🔍 Admin dist kontrol:");
+  console.log("📂 Yol:", adminDist);
+  console.log("✅ Var mı?", fs.existsSync(adminDist));
+  
+  if (fs.existsSync(adminDist)) {
+    console.log("📄 Dosyalar:", fs.readdirSync(adminDist).join(", "));
+    
+    app.use(express.static(adminDist));
 
-  app.get(/^(?!\/api).*/, (req, res) => {
-    res.sendFile(path.join(adminDist, "index.html"));
-  });
+    app.get(/^(?!\/api).*/, (req, res) => {
+      res.sendFile(path.join(adminDist, "index.html"));
+    });
+  } else {
+    console.warn("⚠️ Admin dist bulunamadı! Sadece API çalışıyor.");
+  }
 }
 
 /* ============================
@@ -157,7 +165,6 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error("❌ Error:", err);
 
-  // Clerk errors
   if (err.status === 401 || err.name === "UnauthorizedError") {
     return res.status(401).json({
       success: false,
@@ -165,7 +172,6 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // Validation errors
   if (err.name === "ValidationError") {
     return res.status(400).json({
       success: false,
@@ -174,7 +180,6 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // MongoDB errors
   if (err.name === "MongoError" || err.name === "MongoServerError") {
     return res.status(500).json({
       success: false,
@@ -182,7 +187,6 @@ app.use((err, req, res, next) => {
     });
   }
 
-  // Default error
   res.status(err.status || 500).json({
     success: false,
     message: process.env.NODE_ENV === "production" 
@@ -196,7 +200,6 @@ app.use((err, req, res, next) => {
 ============================ */
 const gracefulShutdown = async (signal) => {
   console.log(`\n${signal} alındı, sunucu kapatılıyor...`);
-  
   process.exit(0);
 };
 

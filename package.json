@@ -7,12 +7,10 @@
   "engines": {
     "node": ">=20.0.0"
   },
- "scripts": {
-  "install": "npm install --prefix backend && npm install --prefix admin",
-  "build": "npm run build --prefix admin",
-  "start": "npm run start --prefix backend"
-},
-
+  "scripts": {
+    "build": "cd admin && npm install && npm run build && cd ..",
+    "start": "cd backend && npm start"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/meryemgkrt/mobile-ecommerce.git"
