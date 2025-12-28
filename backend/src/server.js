@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from "express";
 import path from "path";
-import fs from "fs";  // ✅ EKLE
+import fs from "fs";
 import { fileURLToPath } from "url";
 
 import { clerkMiddleware } from "@clerk/express";
@@ -24,9 +24,10 @@ import cartRoutes from "./routes/cart.route.js";
 const app = express();
 
 /* ============================
-   ESM __dirname
+   ESM __dirname - ✅ DÜZELTME
 ============================ */
-const __dirname=path.resolve()
+const __filename = fileURLToPath(import.meta.url);  // /app/backend/src/server.js
+const __dirname = path.dirname(__filename);         // /app/backend/src
 
 /* ============================
    MIDDLEWARE
@@ -126,10 +127,12 @@ app.use("/api/cart", cartRoutes);
    PRODUCTION STATIC (ADMIN)
 ============================ */
 if (process.env.NODE_ENV === "production") {
-  const adminDist = path.join(__dirname, "../admin/dist");
+  // ✅ DÜZELTME: src/server.js -> ../../admin/dist
+  const adminDist = path.join(__dirname, "../../admin/dist");
 
   console.log("🔍 Admin dist kontrol:");
-  console.log("📂 Yol:", adminDist);
+  console.log("📂 __dirname:", __dirname);
+  console.log("📂 Admin dist yolu:", adminDist);
   console.log("✅ Var mı?", fs.existsSync(adminDist));
   
   if (fs.existsSync(adminDist)) {
