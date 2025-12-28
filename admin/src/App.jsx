@@ -8,7 +8,7 @@ import {
 
 function App() {
   return (
-    <header className="bg-gray-200 p-4">
+    <header>
       <h1 className="text-red-600">HOME PAGE</h1>
       <SignedOut>
         <SignInButton mode="modal" />

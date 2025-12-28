@@ -8,9 +8,9 @@ export default {
     extend: {},
   },
   plugins: [
-    require('daisyui'),  // ✅ DaisyUI plugin ekle
+    require('daisyui'),
   ],
   daisyui: {
-    themes: ["light", "dark"],  // ✅ Temalar
+    themes: ["light", "dark", "forest"],
   },
 }
