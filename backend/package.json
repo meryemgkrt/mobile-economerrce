@@ -4,6 +4,8 @@
   "type": "module",
   "main": "src/server.js",
   "scripts": {
+    "prebuild": "cd ../admin && npm install && npm run build",
+    "build": "echo 'Admin build tamamlandı'",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"
   },
