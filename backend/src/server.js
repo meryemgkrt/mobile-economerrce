@@ -24,10 +24,10 @@ import cartRoutes from "./routes/cart.route.js";
 const app = express();
 
 /* ============================
-   ESM __dirname - ✅ DÜZELTME
+   ESM __dirname
 ============================ */
-const __filename = fileURLToPath(import.meta.url);  // /app/backend/src/server.js
-const __dirname = path.dirname(__filename);         // /app/backend/src
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /* ============================
    MIDDLEWARE
@@ -42,6 +42,7 @@ app.use(
   })
 );
 
+// Request logging (development)
 if (process.env.NODE_ENV !== "production") {
   app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
@@ -49,6 +50,7 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
+// Clerk middleware
 app.use(clerkMiddleware());
 
 /* ============================
@@ -93,7 +95,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 /* ============================
-   HEALTH CHECK
+   API ROUTES
 ============================ */
 app.get("/api/health", (req, res) => {
   res.status(200).json({ 
@@ -103,19 +105,14 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-/* ============================
-   ROOT
-============================ */
-app.get("/", (req, res) => {
+app.get("/api/status", (req, res) => {
   res.status(200).json({ 
     message: "Backend çalışıyor ✅",
-    version: "1.0.0"
+    version: "1.0.0",
+    timestamp: new Date().toISOString()
   });
 });
 
-/* ============================
-   API ROUTES
-============================ */
 app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
@@ -127,7 +124,6 @@ app.use("/api/cart", cartRoutes);
    PRODUCTION STATIC (ADMIN)
 ============================ */
 if (process.env.NODE_ENV === "production") {
-  // ✅ DÜZELTME: src/server.js -> ../../admin/dist
   const adminDist = path.join(__dirname, "../../admin/dist");
 
   console.log("🔍 Admin dist kontrol:");
@@ -138,9 +134,17 @@ if (process.env.NODE_ENV === "production") {
   if (fs.existsSync(adminDist)) {
     console.log("📄 Dosyalar:", fs.readdirSync(adminDist).join(", "));
     
+    // Serve static files
     app.use(express.static(adminDist));
 
-    app.get(/^(?!\/api).*/, (req, res) => {
+    // Catch-all - Admin panel için (Express 5 uyumlu)
+    app.use((req, res, next) => {
+      // API route'larını atla
+      if (req.path.startsWith("/api")) {
+        return next();
+      }
+      
+      // Admin panel serve et
       res.sendFile(path.join(adminDist, "index.html"));
     });
   } else {
@@ -149,15 +153,17 @@ if (process.env.NODE_ENV === "production") {
 }
 
 /* ============================
-   404 HANDLER
+   404 HANDLER (Development)
 ============================ */
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route bulunamadı",
-    path: req.path,
+if (process.env.NODE_ENV !== "production") {
+  app.use((req, res) => {
+    res.status(404).json({
+      success: false,
+      message: "Route bulunamadı",
+      path: req.path,
+    });
   });
-});
+}
 
 /* ============================
    ERROR HANDLER
