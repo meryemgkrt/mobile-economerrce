@@ -14,7 +14,7 @@ function DashboardLayout() {
       />
       <div className="drawer-content flex flex-col">
         <Navbar />
-        <main className="p-6">
+        <main className="pl-16">
           <Outlet /> 
         </main>
       </div>
