@@ -7,11 +7,14 @@ import ProductPage from "./pages/ProductPage";
 import OrderPage from "./pages/OrderPage";
 import CustomerPage from "./pages/CustomersPage";
 import DashboardLayout from "./layouts/DashboardLayout";
+import {LoaderIcon} from "lucide-react"
+import PageLoader from "./components/PageLoader";
 
 function App() {
   const { isSignedIn, isLoaded } = useAuth();
 
-  if (!isLoaded) return null;
+  if (!isLoaded)return <PageLoader />;
+     
 
   return (
     <Routes>
