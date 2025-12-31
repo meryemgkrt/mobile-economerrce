@@ -53,7 +53,10 @@ if (process.env.NODE_ENV !== "production") {
 /* ============================
    TEST INNGEST (CLERK'TEN ÖNCE!)
 ============================ */
-app.post("/api/test-inngest", async (req, res) => {
+/* ============================
+   TEST INNGEST (CLERK'TEN ÖNCE!)
+============================ */
+app.get("/api/test-inngest", async (req, res) => {  // ✅ POST → GET
   try {
     await inngest.send({
       name: "clerk/user.created",
