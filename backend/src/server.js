@@ -50,27 +50,8 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-// Clerk middleware
-app.use(clerkMiddleware());
-
 /* ============================
-   INNGEST ENDPOINT
-============================ */
-app.use(
-  "/api/inngest",
-  serve({
-    client: inngest,
-    functions,
-    signingKey: ENV.INNGEST_SIGNING_KEY,
-    signingKeyFallback: ENV.INNGEST_SIGNING_KEY_FALLBACK,
-  })
-);
-
-/* ============================
-   TEST INNGEST
-============================ */
-/* ============================
-   TEST INNGEST
+   TEST INNGEST (CLERK'TEN ÖNCE!)
 ============================ */
 app.post("/api/test-inngest", async (req, res) => {
   try {
@@ -94,6 +75,22 @@ app.post("/api/test-inngest", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Clerk middleware
+app.use(clerkMiddleware());
+
+/* ============================
+   INNGEST ENDPOINT
+============================ */
+app.use(
+  "/api/inngest",
+  serve({
+    client: inngest,
+    functions,
+    signingKey: ENV.INNGEST_SIGNING_KEY,
+    signingKeyFallback: ENV.INNGEST_SIGNING_KEY_FALLBACK,
+  })
+);
 
 /* ============================
    API ROUTES
