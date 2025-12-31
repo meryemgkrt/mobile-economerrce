@@ -56,7 +56,7 @@ function Sidebar() {
             <img
               src={user?.imageUrl}
               alt={user?.name || "User Avatar"}
-              className="w-10 h-10 rounded-full shrink-0 border-2 border-primary"
+              className="w-10 h-10 rounded-full shrink-0 border-2 "
             />
             <div className="flex flex-col overflow-hidden flex-1">
               <p className="font-semibold text-sm truncate">
