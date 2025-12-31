@@ -67,32 +67,30 @@ app.use(
 );
 
 /* ============================
-   TEST INNGEST (DEVELOPMENT ONLY)
+   TEST INNGEST
 ============================ */
-if (process.env.NODE_ENV !== "production") {
-  app.post("/api/test-inngest", async (req, res) => {
-    try {
-      await inngest.send({
-        name: "clerk/user.created",
-        data: {
-          id: "test_user_" + Date.now(),
-          email_addresses: [{ email_address: "test@example.com" }],
-          first_name: "Test",
-          last_name: "User",
-          image_url: "https://example.com/avatar.jpg",
-        },
-      });
+app.post("/api/test-inngest", async (req, res) => {
+  try {
+    await inngest.send({
+      name: "clerk/user.created",
+      data: {
+        id: "test_user_" + Date.now(),
+        email_addresses: [{ email_address: "test@example.com" }],
+        first_name: "Test",
+        last_name: "User",
+        image_url: "https://example.com/avatar.jpg",
+      },
+    });
 
-      res.json({
-        success: true,
-        message: "✅ Test event gönderildi! Inngest Runs sayfasını kontrol et.",
-      });
-    } catch (error) {
-      console.error("Inngest test error:", error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-}
+    res.json({
+      success: true,
+      message: "✅ Test event gönderildi! Inngest Runs sayfasını kontrol et.",
+    });
+  } catch (error) {
+    console.error("Inngest test error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 /* ============================
    API ROUTES
