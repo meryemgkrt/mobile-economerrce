@@ -38,7 +38,7 @@ function App() {
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="products" element={<ProductPage />} />
         <Route path="orders" element={<OrderPage />} />
-        <Route path="customer" element={<CustomerPage />} />
+        <Route path="customers" element={<CustomerPage />} />
       </Route>
     </Routes>
   );
