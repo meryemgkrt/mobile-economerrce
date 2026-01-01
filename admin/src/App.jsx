@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, Routes, Route } from "react-router";
 import LoginPage from "./pages/LoginPage";
 import { useAuth } from "@clerk/clerk-react";
@@ -7,14 +7,21 @@ import ProductPage from "./pages/ProductPage";
 import OrderPage from "./pages/OrderPage";
 import CustomerPage from "./pages/CustomersPage";
 import DashboardLayout from "./layouts/DashboardLayout";
-import {LoaderIcon} from "lucide-react"
+import { LoaderIcon } from "lucide-react";
 import PageLoader from "./components/PageLoader";
+import { setupAxiosInterceptors } from "./lib/api";
 
 function App() {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded, getToken } = useAuth();
 
-  if (!isLoaded)return <PageLoader />;
-     
+  // Axios interceptor'ı kur - her API isteğinde Clerk token'ı gönder
+  useEffect(() => {
+    if (isSignedIn && getToken) {
+      setupAxiosInterceptors(getToken);
+    }
+  }, [isSignedIn, getToken]);
+
+  if (!isLoaded) return <PageLoader />;
 
   return (
     <Routes>

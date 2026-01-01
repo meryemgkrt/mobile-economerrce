@@ -1,8 +1,25 @@
 import axios from 'axios';
+import { useAuth } from '@clerk/clerk-react';
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
+  baseURL: '/api',
 });
+
+// Clerk token'ı her istekte otomatik ekle
+export const setupAxiosInterceptors = (getToken) => {
+  axiosInstance.interceptors.request.use(
+    async (config) => {
+      const token = await getToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+};
 
 export const productApi = {
   getAll: async () => {
