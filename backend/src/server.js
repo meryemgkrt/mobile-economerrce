@@ -43,7 +43,7 @@ app.use(
 );
 
 // Request logging (development)
-if (process.env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
     next();
@@ -51,12 +51,22 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 /* ============================
-   TEST INNGEST (CLERK'TEN ÖNCE!)
+   INNGEST ENDPOINT (CLERK'TEN ÖNCE!)
 ============================ */
+app.use(
+  "/api/inngest",
+  serve({
+    client: inngest,
+    functions,
+    signingKey: ENV.INNGEST_SIGNING_KEY,
+    signingKeyFallback: ENV.INNGEST_SIGNING_KEY_FALLBACK,
+  })
+);
+
 /* ============================
-   TEST INNGEST (CLERK'TEN ÖNCE!)
+   INNGEST TEST ENDPOINT
 ============================ */
-app.get("/api/test-inngest", async (req, res) => {  // ✅ POST → GET
+app.get("/api/test-inngest", async (req, res) => {
   try {
     await inngest.send({
       name: "clerk/user.created",
@@ -75,25 +85,17 @@ app.get("/api/test-inngest", async (req, res) => {  // ✅ POST → GET
     });
   } catch (error) {
     console.error("Inngest test error:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      success: false,
+      error: error.message 
+    });
   }
 });
 
-// Clerk middleware
-app.use(clerkMiddleware());
-
 /* ============================
-   INNGEST ENDPOINT
+   CLERK MIDDLEWARE
 ============================ */
-app.use(
-  "/api/inngest",
-  serve({
-    client: inngest,
-    functions,
-    signingKey: ENV.INNGEST_SIGNING_KEY,
-    signingKeyFallback: ENV.INNGEST_SIGNING_KEY_FALLBACK,
-  })
-);
+app.use(clerkMiddleware());
 
 /* ============================
    API ROUTES
@@ -102,7 +104,7 @@ app.get("/api/health", (req, res) => {
   res.status(200).json({ 
     status: "ok",
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || "development"
+    environment: ENV.NODE_ENV || "development"
   });
 });
 
@@ -124,7 +126,7 @@ app.use("/api/cart", cartRoutes);
 /* ============================
    PRODUCTION STATIC (ADMIN)
 ============================ */
-if (process.env.NODE_ENV === "production") {
+if (ENV.NODE_ENV === "production") {
   const adminDist = path.join(__dirname, "../../admin/dist");
 
   console.log("🔍 Admin dist kontrol:");
@@ -135,17 +137,12 @@ if (process.env.NODE_ENV === "production") {
   if (fs.existsSync(adminDist)) {
     console.log("📄 Dosyalar:", fs.readdirSync(adminDist).join(", "));
     
-    // Serve static files
     app.use(express.static(adminDist));
 
-    // Catch-all - Admin panel için (Express 5 uyumlu)
     app.use((req, res, next) => {
-      // API route'larını atla
       if (req.path.startsWith("/api")) {
         return next();
       }
-      
-      // Admin panel serve et
       res.sendFile(path.join(adminDist, "index.html"));
     });
   } else {
@@ -156,7 +153,7 @@ if (process.env.NODE_ENV === "production") {
 /* ============================
    404 HANDLER (Development)
 ============================ */
-if (process.env.NODE_ENV !== "production") {
+if (ENV.NODE_ENV !== "production") {
   app.use((req, res) => {
     res.status(404).json({
       success: false,
@@ -196,7 +193,7 @@ app.use((err, req, res, next) => {
 
   res.status(err.status || 500).json({
     success: false,
-    message: process.env.NODE_ENV === "production" 
+    message: ENV.NODE_ENV === "production" 
       ? "Bir hata oluştu" 
       : err.message,
   });
@@ -220,11 +217,11 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    const PORT = process.env.PORT || ENV.PORT || 8080;
+    const PORT = ENV.PORT || 8080;
     app.listen(PORT, () => {
       console.log(`🚀 Server başarıyla başlatıldı`);
       console.log(`📍 Port: ${PORT}`);
-      console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
+      console.log(`🌍 Environment: ${ENV.NODE_ENV || "development"}`);
       console.log(`⏰ ${new Date().toLocaleString("tr-TR")}`);
     });
   } catch (err) {

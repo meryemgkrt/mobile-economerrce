@@ -5,7 +5,8 @@ import { ENV } from "./env.js";
 
 export const inngest = new Inngest({
   id: "economerrce-app",
-  // eventKey gerekmiyor (modern Inngest)
+  signingKey: ENV.INNGEST_SIGNING_KEY,
+  signingKeyFallback: ENV.INNGEST_SIGNING_KEY_FALLBACK,
 });
 
 const syncUser = inngest.createFunction(
