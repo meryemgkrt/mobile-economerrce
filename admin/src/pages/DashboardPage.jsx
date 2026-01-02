@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { orderApi, statsApi } from "../lib/api"
-import { DollarSign,  PackageIcon, ShoppingBagIcon, UserIcon } from 'lucide-react';
+import { DollarSign, PackageIcon, ShoppingBagIcon, UserIcon } from 'lucide-react';
 
 function DashboardPage() {
   const { data: ordersData, isLoading: ordersLoading, error } = useQuery({
@@ -31,7 +31,7 @@ function DashboardPage() {
       title: "Total Customers",
       value: statsLoading ? "..." : statsData?.totalCustomers || 0,
       icon: <UserIcon className='size-8' />
-    }, 
+    },
     {
       title: "Total Products",
       value: statsLoading ? "..." : statsData?.totalProducts || 0,
@@ -41,10 +41,10 @@ function DashboardPage() {
   ]
   return (
     <div className='space-y-6'>
-      
+
       {/* Stats Cards */}
       <div className="stats stats-vertical lg:stats-horizontal shadow w-full bg-base-100">
-        {statsCards.map((stat)=>(
+        {statsCards.map((stat) => (
           <div key={stat.title} className="stat">
             <div className="stat-figure text-primary">{stat.icon}</div>
             <div className="stat-title">{stat.title}</div>
@@ -56,19 +56,19 @@ function DashboardPage() {
       <div className="card bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Recent Orders</h2>
-{ordersLoading ?(
-  <div className="flex justify-center py-8">
-    <span className="loading loading-spinner loading-lg"></span>
+          {ordersLoading ? (
+            <div className="flex justify-center py-8">
+              <span className="loading loading-spinner loading-lg"></span>
 
-  </div>
-) : recentOrders.length === 0 ? (
-  <div className="text-center py-8 text-base-content/60">No recent orders found.</div>
-) : (
-  <div className="overflow-x-auto">
-        <table className="table w-full">
-          </table>
-  </div>
-)}
+            </div>
+          ) : recentOrders.length === 0 ? (
+            <div className="text-center py-8 text-base-content/60">No recent orders found.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
